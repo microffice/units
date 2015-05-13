@@ -1,0 +1,31 @@
+{
+    "name": "microffice/units",
+    "description": "Microffice's Units managment package.",
+    "keywords": ["CRM", "ERP", "microffice", "units"],
+    "type": "package",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Stoemp Saucisse",
+            "email": "stoempsaucisse@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.8",
+        "illuminate/support": "^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.6",
+        "mockery/mockery": "~0.9",
+        "illuminate/database": "~5.0",
+        "illuminate/console": "~5.0",
+        "illuminate/events": "~5.0",
+        "illuminate/filesystem": "~5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Microffice\\Units\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
