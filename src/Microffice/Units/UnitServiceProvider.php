@@ -1,15 +1,13 @@
-<?php
-
-namespace Microffice\Units;
+<?php namespace Microffice\Units;
 
 use Illuminate\Support\ServiceProvider;
 
 /**
- * UnitsServiceProvider
+ * UnitServiceProvider
  *
  */ 
 
-class UnitsServiceProvider extends ServiceProvider {
+class UnitServiceProvider extends ServiceProvider {
 
     /**
      * Indicates if loading of the provider is deferred.
@@ -45,7 +43,7 @@ class UnitsServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->registerUnits();
+        $this->registerUnit();
         $this->registerCommands();
     }
 
@@ -54,11 +52,11 @@ class UnitsServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function registerUnits()
+    public function registerUnit()
     {
-        $this->app->bind('units', function($app)
+        $this->app->bind('unit', function($app)
         {
-            return new Units();
+            return new Unit();
         });
     }
 

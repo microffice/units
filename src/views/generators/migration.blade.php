@@ -12,7 +12,9 @@ class SetupUnitsTable extends Migration {
         // Creates the units table
         Schema::create(\Config::get('units.table_name'), function($table)
         {           
-            
+            $table->increments('id');
+            $table->timestamps();
+            $table->string('unit', 5);
         });
     }
 

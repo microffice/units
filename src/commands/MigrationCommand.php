@@ -1,5 +1,4 @@
-<?php
-namespace Microffice\Units;
+<?php namespace Microffice\Units;
 
 use Illuminate\Console\Command;
 
