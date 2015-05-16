@@ -1,4 +1,4 @@
-<?php namespace Microffice\Units;
+<?php namespace Microffice\Units\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
  * UnitFacade
  *
  */ 
-class UnitFacade extends Facade {
+class Unit extends Facade {
  
     /**
      * Get the registered name of the component.

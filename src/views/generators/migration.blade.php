@@ -1,6 +1,6 @@
 use Illuminate\Database\Migrations\Migration;
 
-class SetupUnitsTable extends Migration {
+class CreateUnitsTable extends Migration {
 
     /**
      * Run the migrations.
@@ -9,12 +9,15 @@ class SetupUnitsTable extends Migration {
      */
     public function up()
     {
+        // If there already exist a units table, delete it
+        Schema::dropIfExists(\Config::get('units.table_name'));
+        
         // Creates the units table
         Schema::create(\Config::get('units.table_name'), function($table)
         {           
             $table->increments('id');
-            $table->timestamps();
             $table->string('unit', 5);
+            $table->timestamps();
         });
     }
 

@@ -1,8 +1,9 @@
 <?php namespace Microffice\Units;
 
-use Illuminate\Console\Command;
+use Illuminate\Database\Console\Migrations\BaseCommand;
+use Symfony\Component\Console\Input\InputOption;
 
-class MigrationCommand extends Command {
+class MigrationCommand extends BaseCommand {
 
     /**
      * The console command name.
@@ -41,17 +42,21 @@ class MigrationCommand extends Command {
         $this->info('The migration process will create a migration file and a seeder for the units list');
         
         $this->line('');
-
-        if ( $this->confirm("Proceed with the migration creation? [Yes|no]") )
+        // We check if the migrations are for unit testing purposes.
+        // If it is we skip confirmation.
+        if ( $this->input->getOption('unittesting') || $this->confirm("Proceed with the migration creation? [Yes|no]") )
         {
             $this->line('');
 
             $this->info( "Creating migration and seeder..." );
             if( $this->createMigration( 'units' ) )
             {
-                $this->line('');
-                
-                $this->call('optimize', array());
+                if(! $this->input->getOption('unittesting'))
+                {
+                    $this->line('');
+                    
+                    $this->call('optimize', array());
+                }
                 
                 $this->line('');
                 
@@ -75,7 +80,10 @@ class MigrationCommand extends Command {
      */
     protected function getOptions()
     {
-        return array();
+        return array(
+            array('unittesting', 'ut', InputOption::VALUE_NONE, 'Store created migrations in tests/migrations subdirectiory'),
+            array('path', 'p', InputOption::VALUE_OPTIONAL, 'Path to the directory where \'migration/\' an \'seed/\' subdirectories reside or have to be created.'),/**/
+        );
     }
 
     /**
@@ -88,8 +96,13 @@ class MigrationCommand extends Command {
     {
         //Create the migration
         $app = app();
+
+        $basePath = ( $this->input->getOption('path') ) ? $this->input->getOption('path') : $this->getBasePath();
+
+        $this->checkMigrationsDirectoriesExists($basePath);
+
         $migrationFiles = array(
-            $this->laravel->path."/../database/migrations/*_setup_units_table.php" => 'units::generators.migration'
+            $basePath.'/migrations/*_create_units_table.php' => 'units::generators.migration'
         );
 
         $seconds = 0;
@@ -100,7 +113,7 @@ class MigrationCommand extends Command {
                 
                 $fs = fopen($migrationFile, 'x');
                 if ($fs) {
-                    $output = "<?php\n\n" .$app['view']->make($outputFile)->with('table', 'units')->render();
+                    $output = "<?php\n\n" .$app['view']->make($outputFile)->with(array('table' => 'units'))->render();
                     
                     fwrite($fs, $output);
                     fclose($fs);
@@ -111,10 +124,10 @@ class MigrationCommand extends Command {
                 $seconds++;
             }
         }
-        
-        
+
         //Create the seeder
-        $seeder_file = $this->laravel->path."/../database/seeds/UnitsSeeder.php";
+        $seeder_file = $basePath.'/seeds/UnitsSeeder.php';
+
         $output = "<?php\n\n" .$app['view']->make('units::generators.seeder')->render();
         
         if (!file_exists( $seeder_file )) {
@@ -126,8 +139,41 @@ class MigrationCommand extends Command {
                 return false;
             }
         }
-        
         return true;
+    }
+
+    /**
+     * Get the target directory path.
+     * In function of --unittesting flag
+     *
+     * @return string
+     */
+    protected function getBasePath()
+    {
+        // We check if the migrations are for unit testing purposes.
+        // If it is we use the 'tests/migration' path relative to the package.
+        // Else we use Laravel default storage place.
+        return $this->input->getOption('unittesting') ? __DIR__.'/../../tests' : $this->laravel->path.'/../database';
+    }
+
+    /**
+     * Check if "migrations/" and "seeds/" subdirectories exists in $basePath
+     * and create them if necessary
+     *
+     * @param  string $basePath
+     * @return void
+     */
+    protected function checkMigrationsDirectoriesExists($basePath)
+    {
+        if(! file_exists($basePath."/seeds"))
+        {
+            mkdir($basePath."/seeds", 0777, true);
+        }
+
+        if(! file_exists($basePath."/migrations"))
+        {
+            mkdir($basePath."/migrations", 0777, true);
+        }
     }
 
 }
