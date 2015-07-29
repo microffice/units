@@ -1,9 +1,9 @@
-<?php namespace Microffice\Units\Facades;
+<?php namespace Microffice\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * UnitFacade
+ * Unit Facade
  *
  */ 
 class Unit extends Facade {
@@ -13,6 +13,7 @@ class Unit extends Facade {
      *
      * @return string
      */
+    //protected static function getFacadeAccessor() { return 'Microffice\Contracts\Units\UnitHandler'; }
     protected static function getFacadeAccessor() { return 'unit'; }
  
 }

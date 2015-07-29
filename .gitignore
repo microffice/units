@@ -1,3 +1,6 @@
 /vendor
 /tests/migrations
 /tests/seeds
+/src/**/Core
+/src/**/helpers
+composer.lock

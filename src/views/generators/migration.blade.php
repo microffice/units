@@ -1,6 +1,6 @@
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUnitsTable extends Migration {
+class CreateUnitsTable{{$suffix}} extends Migration {
 
     /**
      * Run the migrations.

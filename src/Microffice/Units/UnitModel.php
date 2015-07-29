@@ -3,11 +3,11 @@
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Units
+ * Units Model
  *
  */ 
 
-class Unit extends Model {
+class UnitModel extends Model {
 
     /**
      * The database table used by the model.
@@ -36,5 +36,15 @@ class Unit extends Model {
      * @var bool
      */
     public $timestamps = true;
+ 
+    /**
+    * Validation Rules
+    * this is just a place for us to store these, you could
+    * alternatively place them in your repository
+    * @var array
+    */
+    public static $rules = array(
+        'unit' => 'required|min:1|max:5'
+    );
 
 }

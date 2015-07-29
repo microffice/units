@@ -1,6 +1,7 @@
 <?php namespace Microffice\Units;
 
 use Illuminate\Support\ServiceProvider;
+use Microffice\Units\UnitHandler;
 
 /**
  * UnitServiceProvider
@@ -14,7 +15,7 @@ class UnitServiceProvider extends ServiceProvider {
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
     * Bootstrap the application.
@@ -24,16 +25,16 @@ class UnitServiceProvider extends ServiceProvider {
     public function boot()
     {
         // The publication files to publish
-        $this->publishes([__DIR__ . '/../../config/config.php' => config_path('units.php')]);
+        $this->publishes([
+            __DIR__ . '/../../config/config.php' => config_path('units.php'),
+            __DIR__ . '/../../views' => base_path('resources/views/microffice/units'),
+        ]);
 
-        // Append the country settings
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/config.php', 'units'
-        );
-        /*$this->app['config']['database.connections'] = array_merge(
-            $this->app['config']['database.connections'],
-            \Config::get('career.library.database.connections')
-        );*/
+        // Append the units settings
+        $this->mergeConfigFrom(__DIR__ . '/../../config/config.php', 'units');
+
+        // Load views
+        $this->loadViewsFrom(__DIR__ . '/../../views', 'units');
     }
         
     /**
@@ -53,11 +54,12 @@ class UnitServiceProvider extends ServiceProvider {
      * @return void
      */
     public function registerUnit()
-    {
+    {   
         $this->app->bind('unit', function($app)
         {
-            return new Unit();
-        });
+            $handler = \Config::get('units.handler');
+            return new $handler();
+        });/**/
     }
 
     /**
@@ -82,6 +84,7 @@ class UnitServiceProvider extends ServiceProvider {
      */
     public function provides()
     {
-        return array('units');
+        //return ['Microffice\Contracts\Units\UnitHandler'];
+        return ['unit'];
     }
 }

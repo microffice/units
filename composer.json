@@ -20,14 +20,17 @@
         "vlucas/phpdotenv": "~1.0"
     },
     "require-dev": {
-        "orchestra/testbench": "~3.0"
+        "orchestra/testbench": "~3.0",
+        "behat/behat": "~2.5",
+        "mockery/mockery": "~0.9"
     },
     "autoload": {
         "psr-4": {
-            "Microffice\\Units\\": "src/Microffice/Units/"
+            "Microffice\\": "src/Microffice/"
         },
         "classmap": [
-            "src/commands"
+            "src/commands",
+            "src/Microffice/helpers"
         ]
     },
     "autoload-dev": {

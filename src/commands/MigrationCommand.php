@@ -110,10 +110,12 @@ class MigrationCommand extends BaseCommand {
         foreach ($migrationFiles as $migrationFile => $outputFile) {            
             if (sizeof(glob($migrationFile)) == 0) {
                 $migrationFile = str_replace('*', date('Y_m_d_His', strtotime('+' . $seconds . ' seconds')), $migrationFile);
-                
+                // We use a suffix to distinguish multiple CreateUnitsTable classes
+                // when Unit Testing and using an alternative path
+                $suffix = ($this->input->getOption('unittesting') && $this->input->getOption('path')) ? '_' . time() : '';
                 $fs = fopen($migrationFile, 'x');
                 if ($fs) {
-                    $output = "<?php\n\n" .$app['view']->make($outputFile)->with(array('table' => 'units'))->render();
+                    $output = "<?php\n\n" .$app['view']->make($outputFile)->with(array('suffix' => $suffix))/**/->render();
                     
                     fwrite($fs, $output);
                     fclose($fs);

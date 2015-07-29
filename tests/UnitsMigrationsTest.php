@@ -9,11 +9,8 @@ class UnitsMigrationsTest extends UnitsBaseTest {
     {
         parent::setUp();
 
-        // generate migrations
-        $this->artisan('units:migration', [
-            '-ut' => null,
-        ]);
-        //require_once __DIR__.'/seeds/UnitsSeeder.php';
+        $this->createMigrations();
+        
         /**/
         // 'artisan migrate --database' option is the connection to use
         // as usually available in config/database.php
@@ -48,75 +45,58 @@ class UnitsMigrationsTest extends UnitsBaseTest {
             '--class' => 'Microffice\Units\Tests\UnitsSeeder'
         ]);/**/
     }
-
+    
     /**
-     * Get package providers.  At a minimum this is the package being tested, but also
-     * would include packages upon which our package depends, e.g. Cartalyst/Sentry
-     * In a normal app environment these would be added to the 'providers' array in
-     * the config/app.php file.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     *
-     * @return array
+     * Tear the test environment down.
      */
-    protected function getPackageProviders($app)
+    public function tearDown()
     {
-        return [
-            //'Cartalyst\Sentry\SentryServiceProvider',
-            //'YourProject\YourPackage\YourPackageServiceProvider',
-            'Microffice\Units\UnitServiceProvider'
-        ];
-    }
+        parent::tearDown();
+        
+        /*$path = __DIR__.'/seeds';
+        $this->emptyDirectory($path);
+        rmdir($path);
 
-    /**
-     * Get package aliases.  In a normal app environment these would be added to
-     * the 'aliases' array in the config/app.php file.  If your package exposes an
-     * aliased facade, you should add the alias here, along with aliases for
-     * facades upon which your package depends, e.g. Cartalyst/Sentry.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     *
-     * @return array
-     */
-    protected function getPackageAliases($app)
-    {
-        return [
-            //'Sentry'      => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
-            //'YourPackage' => 'YourProject\YourPackage\Facades\YourPackage',
-            'Units' => 'Microffice\Units\Facades\Unit'
-        ];
+        $path = __DIR__.'/migrations';
+        $this->emptyDirectory($path);
+        rmdir($path);/**/
+        //\Schema::dropIfExists(\Config::get('units.table_name'));
+        //\Schema::dropIfExists('migrations');
     }
 
     /**
      * Test running migration.
      *
      * @test
+     * @group ApplicationTests
      */
     public function testRunningMigration()
     {
-        $this->artisan('migrate', [
-            '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__.'/migrations'),
-        ]);
+        $this->migrate('testbench_mysql', false);
 
         $this->assertTrue(\Schema::hasTable(\Config::get('units.table_name')));
 
         \Schema::dropIfExists(\Config::get('units.table_name'));
-        \Schema::dropIfExists('migrations');
+        \Schema::dropIfExists('migrations');/**/
     }
 
     /**
      * Test running migration.
      *
      * @test
+     * @group ApplicationTests
      */
     public function testRunningSeed()
     {
         $this->artisan('migrate', [
-            '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__.'/migrations'),
-            '--seed' => null
+            '--database' => 'testbench_mysql',
+            '--realpath' => realpath(__DIR__.'/migrations')/**/
         ]);
+        // We need to separate seed command to pass the correct --class option
+        $this->artisan('db:seed', [
+            '--database' => 'testbench_mysql',
+            '--class' => 'UnitsSeeder'
+        ]);/**/
 
         $units = \DB::table(\Config::get('units.table_name'))->where('id', '=', 1)->first();
 

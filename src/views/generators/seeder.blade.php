@@ -1,5 +1,5 @@
 use Illuminate\Database\Seeder;
-use Microffice\Units\Unit;
+use Microffice\Units\UnitModel;
 
 class UnitsSeeder extends Seeder {
 
@@ -12,8 +12,9 @@ class UnitsSeeder extends Seeder {
     {
         //Empty the units table
         \DB::table(\Config::get('units.table_name'))->delete();
+        \DB::statement('ALTER TABLE ' . \Config::get('units.table_name') . ' AUTO_INCREMENT = 1');
 
         // Fill the units table
-        Unit::create(['unit' => 'm']);
+        UnitModel::create(['unit' => 'm']);
     }
 }
